@@ -5,9 +5,4 @@ export interface Language {
 	gramatic?: string
 	/** File extensions to be analysed */
 	extensions?: string[]
-
-	// constructor(name: string, gramatic?: string) {
-	// 	this.name = name
-	// 	this.gramatic = gramatic
-	// }
 }
