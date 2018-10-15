@@ -1,1 +1,23 @@
-[{ "name": "C#", "extensions": ".cs" }]
+[
+	{
+		"name": "C#",
+		"extensions": ".cs",
+		"grammar": {
+			"states": ["IN", "AS", "AD", "CI", "CM", "LB"],
+			"initial": "IN",
+			"lambda": "LB",
+			"transitions": [
+				"IN -> 'AS",
+				"IN -> \"AD",
+				"IN -> //CI",
+				"IN -> /*CM",
+				"IN -> =>LB",
+				"AS -> 'IN",
+				"AD -> \"IN",
+				"CI -> \nIN",
+				"CM -> */IN",
+				"LB -> IN"
+			]
+		}
+	}
+]

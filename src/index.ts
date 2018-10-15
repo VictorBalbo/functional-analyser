@@ -6,14 +6,7 @@ import langs from '../languages.json'
 import CONSTANTS from './constants'
 import { Language } from './models/Language'
 import { getFolder, Repository } from './models/Repository'
-
-const checkGramatics = (error: Error, repo: Repository) => {
-	if (error) {
-		console.log(error.message)
-		return
-	}
-	/// TODO: Implement gramatic checker
-}
+import { Analyser } from './Analyser.js'
 
 const getRepos = async (lang: Language) => {
 	const url = CONSTANTS.GITHUB_API + encodeURIComponent(lang.name)
@@ -23,27 +16,35 @@ const getRepos = async (lang: Language) => {
 	const repos = await response
 		.json()
 		.then((data) => data.items as Repository[])
-
-	repos.map(async (repo) => {
+	
+	let analyser = new Analyser(lang)
+	let promises = repos.map(async (repo) => {
 		// Check if folder already exists and is up to date
 		if (await fs.exists(getFolder(repo))) {
 			const folder = await fs.stat(getFolder(repo))
 			if (moment(folder.mtime) > moment(repo.pushed_at)) {
-				console.log('Existe', repo.name)
+				analyser.checkRepo(repo)
 				return
 			}
 		}
-		console.log('Nao Existe', repo.name)
 
 		// else, download it
 		download(repo.full_name, getFolder(repo), (error: Error) => {
-			checkGramatics(error, repo)
+			if (error) {
+				console.log(`Error on Repository '${repo.full_name}': `, error.message)
+				return
+			}
+			analyser.checkRepo(repo)
 		})
 	})
+	return Promise.all(promises)
 }
 
 const main = async (l: Language[]) => {
-	l.map((lang) => getRepos(lang))
+	let promises = l.map(async (lang) => await getRepos(lang))
+	return Promise.all(promises)
 }
 
-main(langs)
+(async ()=>{
+	await main(langs)
+})()
