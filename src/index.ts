@@ -25,6 +25,8 @@ const getRepos = async (lang: Language) => {
 			if (moment(folder.mtime) > moment(repo.pushed_at)) {
 				analyser.checkRepo(repo)
 				return
+			} else {
+				fs.delete(getFolder(repo))
 			}
 		}
 

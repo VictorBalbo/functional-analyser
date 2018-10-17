@@ -15,5 +15,5 @@ interface Grammar {
 	/** Lambda State */
 	lambda: string
 	/** Grammar transitions */
-	transitions: string[]
+	transitions: string[][]
 }

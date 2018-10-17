@@ -7,16 +7,16 @@
 			"initial": "IN",
 			"lambda": "LB",
 			"transitions": [
-				"IN -> 'AS",
-				"IN -> \"AD",
-				"IN -> //CI",
-				"IN -> /*CM",
-				"IN -> =>LB",
-				"AS -> 'IN",
-				"AD -> \"IN",
-				"CI -> \nIN",
-				"CM -> */IN",
-				"LB -> IN"
+				["IN", "'", "AS"],
+				["IN", "\"", "AD"],
+				["IN", "//", "CI"],
+				["IN", "/*", "CM"],
+				["IN", "=>", "LB"],
+				["AS", "'", "IN"],
+				["AD", "\"", "IN"],
+				["CI", "\n", "IN"],
+				["CM", "*/", "IN"],
+				["LB", "", "IN"]
 			]
 		}
 	}
