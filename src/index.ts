@@ -23,7 +23,8 @@ const getRepos = async (lang: Language) => {
 		if (await fs.exists(getFolder(repo))) {
 			const folder = await fs.stat(getFolder(repo))
 			if (moment(folder.mtime) > moment(repo.pushed_at)) {
-				analyser.checkRepo(repo)
+				let lambdas = await analyser.checkRepo(repo)
+				console.log(lambdas)
 				return
 			} else {
 				fs.delete(getFolder(repo))
