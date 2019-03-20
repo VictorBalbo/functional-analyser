@@ -4,12 +4,15 @@ import moment from 'moment'
 import fetch from 'node-fetch'
 import langs from '../languages.json'
 import CONSTANTS from './constants'
-import { Language } from './models/Language'
+import { Language, CreateDiagram } from './models/Language'
 import { getFolder, Repository } from './models/Repository'
 import { Analyser } from './Analyser.js'
 
 const getRepos = async (lang: Language) => {
 	const url = CONSTANTS.GITHUB_API + encodeURIComponent(lang.name)
+	// Save language diagram
+	let diagram = CreateDiagram(lang)
+	await fs.writeTextFile(`Diagrams/${lang.name}.dot`, diagram, 'utf8')
 
 	// Get most used repositories by language
 	const response = await fetch(url)
@@ -32,13 +35,13 @@ const getRepos = async (lang: Language) => {
 		}
 
 		// else, download it
-		download(repo.full_name, getFolder(repo), (error: Error) => {
-			if (error) {
-				console.log(`Error on Repository '${repo.full_name}': `, error.message)
-				return
-			}
-			analyser.checkRepo(repo)
-		})
+		// download(repo.full_name, getFolder(repo), (error: Error) => {
+		// 	if (error) {
+		// 		console.log(`Error on Repository '${repo.full_name}': `, error.message)
+		// 		return
+		// 	}
+		// 	analyser.checkRepo(repo)
+		// })
 	})
 	return Promise.all(promises)
 }
