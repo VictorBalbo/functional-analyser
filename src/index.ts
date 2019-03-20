@@ -3,15 +3,15 @@ import download from 'download-git-repo'
 import moment from 'moment'
 import fetch from 'node-fetch'
 import langs from '../languages.json'
-import CONSTANTS from './constants'
-import { Language, CreateDiagram } from './models/Language'
-import { getFolder, Repository } from './models/Repository'
 import { Analyser } from './Analyser.js'
+import CONSTANTS from './constants'
+import { CreateDiagram, Language } from './models/Language'
+import { getFolderPath, Repository } from './models/Repository'
 
 const getRepos = async (lang: Language) => {
 	const url = CONSTANTS.GITHUB_API + encodeURIComponent(lang.name)
 	// Save language diagram
-	let diagram = CreateDiagram(lang)
+	const diagram = CreateDiagram(lang)
 	await fs.writeTextFile(`Diagrams/${lang.name}.dot`, diagram, 'utf8')
 
 	// Get most used repositories by language
@@ -19,18 +19,18 @@ const getRepos = async (lang: Language) => {
 	const repos = await response
 		.json()
 		.then((data) => data.items as Repository[])
-	
-	let analyser = new Analyser(lang)
-	let promises = repos.map(async (repo) => {
+
+	const analyser = new Analyser(lang)
+	const promises = repos.map(async (repo) => {
 		// Check if folder already exists and is up to date
-		if (await fs.exists(getFolder(repo))) {
-			const folder = await fs.stat(getFolder(repo))
+		if (await fs.exists(getFolderPath(repo))) {
+			const folder = await fs.stat(getFolderPath(repo))
 			if (moment(folder.mtime) > moment(repo.pushed_at)) {
-				let lambdas = await analyser.checkRepo(repo)
-				console.log(lambdas)
+				const lambdas = await analyser.checkRepo(repo)
+				console.log(`${repo.name}: ${lambdas} lambdas`)
 				return
 			} else {
-				fs.delete(getFolder(repo))
+				fs.delete(getFolderPath(repo))
 			}
 		}
 
@@ -47,10 +47,10 @@ const getRepos = async (lang: Language) => {
 }
 
 const main = async (l: Language[]) => {
-	let promises = l.map(async (lang) => await getRepos(lang))
+	const promises = l.map(async (lang) => await getRepos(lang))
 	return Promise.all(promises)
 }
 
-(async ()=>{
+(async () => {
 	await main(langs)
 })()

@@ -5,4 +5,4 @@ export interface Repository {
 	name?: string
 	pushed_at?: Date
 }
-export const getFolder = (repo: Repository) => `./Repositories/${repo.language}/${repo.name}`
+export const getFolderPath = (repo: Repository) => `./Repositories/${repo.language}/${repo.name}`

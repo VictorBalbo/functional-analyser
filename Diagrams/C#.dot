@@ -7,16 +7,11 @@ digraph "AFER" {
 	IN -> CI [label="//"]
 	IN -> CM [label="/*"]
 	IN -> LB [label="=>"]
-
 	AS -> AS [label="\\'"]
 	AS -> IN [label="'"]
-
 	AD -> AD [label="\\\""]
 	AD -> IN [label="\""]
-
 	CI -> IN [label="\n"]
-
 	CM -> IN [label="*/"]
-	
 	LB -> IN [label=""]
 }

@@ -2,10 +2,13 @@
   "name": "functional-analyser",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc | node ./dist/index"
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Victor Balbo",
   "license": "ISC",
