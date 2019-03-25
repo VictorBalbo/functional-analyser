@@ -23,14 +23,15 @@ const getRepos = async (lang: Language) => {
 	const analyser = new Analyser(lang)
 	const promises = repos.map(async (repo) => {
 		// Check if folder already exists and is up to date
-		if (await fs.exists(getFolderPath(repo))) {
-			const folder = await fs.stat(getFolderPath(repo))
+		const repoFolderPath = getFolderPath(repo)
+		if (await fs.exists(repoFolderPath)) {
+			const folder = await fs.stat(repoFolderPath)
 			if (moment(folder.mtime) > moment(repo.pushed_at)) {
 				const lambdas = await analyser.checkRepo(repo)
 				console.log(`${repo.name}: ${lambdas} lambdas`)
 				return
 			} else {
-				fs.delete(getFolderPath(repo))
+				fs.delete(repoFolderPath)
 			}
 		}
 

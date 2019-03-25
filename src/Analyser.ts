@@ -5,19 +5,17 @@ import { getFolderPath, Repository } from './models/Repository'
 
 export class Analyser {
 	public lang: Language
-	public lambdas: number
 
 	constructor(lang: Language) {
 		this.lang = lang
-		this.lambdas = 0
 	}
 
 	public async checkRepo(repo: Repository) {
-		await this.checkFolder(getFolderPath(repo), this.lang.extensions)
-		return this.lambdas
+		const repoFolder = getFolderPath(repo)
+		return this.checkFolder(repoFolder, this.lang.extensions)
 	}
 
-	public async checkFolder(currentPath: string, extensions: string[]) {
+	public async checkFolder(currentPath: string, extensions: string[]): Promise<number[]> {
 		const files = await fs.readdir(currentPath)
 		// Iterate over each 'file' in folder
 		const promises = files.map(async (file) => {
@@ -30,17 +28,21 @@ export class Analyser {
 
 				// If is a file and has correct extension, check file
 				if (fileExt && extensions.indexOf(fileExt) !== -1) {
-					await this.checkFile(currentFile)
+					return this.checkFile(currentFile)
 				}
+				return [0]
 			// If is a directory, check the directory
 			} else if (stats.isDirectory()) {
-				await this.checkFolder(currentFile, extensions)
+				return this.checkFolder(currentFile, extensions)
 			}
+			return [-1]
 		})
-		return Promise.all(promises)
+		const lambdas = await Promise.all(promises)
+		return lambdas.reduce((accumulator, value) => accumulator.concat(value))
 	}
 
-	public async checkFile(filePath: string) {
+	public async checkFile(filePath: string): Promise<number[]> {
+		let lambdasInFile = 0
 		let file = (await fs.readFile(filePath, 'utf8')) as string
 		file = file.replace(/\s/, ' ')
 		let currentState = this.lang.grammar.initial
@@ -61,9 +63,10 @@ export class Analyser {
 
 				// If found a lambda defined by grammar, incremment counter
 				if (nextState[0] === this.lang.grammar.lambda) {
-					this.lambdas++
+					lambdasInFile++
 				}
 			}
 		}
+		return [lambdasInFile]
 	}
 }
