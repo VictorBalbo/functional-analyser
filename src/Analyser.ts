@@ -38,7 +38,9 @@ export class Analyser {
 			return [-1]
 		})
 		const lambdas = await Promise.all(promises)
-		return lambdas.reduce((accumulator, value) => accumulator.concat(value))
+		return lambdas
+			.reduce((accumulator, value) => accumulator.concat(value))
+			.filter((n) =>  n > 0)
 	}
 
 	public async checkFile(filePath: string): Promise<number[]> {
@@ -46,8 +48,12 @@ export class Analyser {
 		let file = (await fs.readFile(filePath, 'utf8')) as string
 		file = file.replace(/\s/, ' ')
 		let currentState = this.lang.grammar.initial
+		let line = 0
 
 		for (let i = 0; i < file.length; i++) {
+			if (file.substr(i, 1) === '\n') {
+				line++
+			}
 			// Get a possible transition from current state with current char
 			const nextState = this.lang.grammar.transitions.find(
 				(t) =>
@@ -64,6 +70,7 @@ export class Analyser {
 				// If found a lambda defined by grammar, incremment counter
 				if (nextState[0] === this.lang.grammar.lambda) {
 					lambdasInFile++
+					console.log(filePath, line)
 				}
 			}
 		}

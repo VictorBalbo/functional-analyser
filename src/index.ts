@@ -36,7 +36,7 @@ const getRepos = async (lang: Language) => {
 		}
 
 		// else, download it
-		// download(repo.full_name, getFolder(repo), (error: Error) => {
+		// download(repo.full_name, repoFolderPath, (error: Error) => {
 		// 	if (error) {
 		// 		console.log(`Error on Repository '${repo.full_name}': `, error.message)
 		// 		return
