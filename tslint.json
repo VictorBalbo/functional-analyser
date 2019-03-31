@@ -14,7 +14,8 @@
         "max-line-length": false,
         "indent": [true, "tabs", 4],
         "no-console": false,
-        "no-empty": false
+        "no-empty": false,
+        "object-literal-sort-keys": false
     },
     "rulesDirectory": []
 }
