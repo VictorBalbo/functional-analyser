@@ -17,5 +17,11 @@
         "no-empty": false,
         "object-literal-sort-keys": false
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "linterOptions": {
+        "exclude": [
+            "node_modules/**",
+            "Repositories/**"
+        ]
+    }
 }
