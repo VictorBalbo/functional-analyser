@@ -12,15 +12,21 @@ export class Analyser {
 
 	public async checkRepo(repo: Repository): Promise<Repository> {
 		const repoFolder = getFolderPath(repo)
-		const computedLambdas = await this.checkFolder(repoFolder, this.lang.extensions)
+		const computedLambdas = await this.checkFolder(
+			repoFolder,
+			this.lang.extensions,
+		)
 		return {
 			...repo,
 			totalFiles: computedLambdas.length,
-			lamdasPerFile: computedLambdas.filter((l) => l > 0),
+			lamdasPerFiles: computedLambdas.filter((l) => l > 0),
 		}
 	}
 
-	public async checkFolder(currentPath: string, extensions: string[]): Promise<number[]> {
+	public async checkFolder(
+		currentPath: string,
+		extensions: string[],
+	): Promise<number[]> {
 		const files = await fs.readdir(currentPath)
 		// Iterate over each 'file' in folder
 		const promises = files.map(async (file) => {
@@ -35,7 +41,7 @@ export class Analyser {
 				if (fileExt && extensions.indexOf(fileExt) !== -1) {
 					return this.checkFile(currentFile)
 				}
-			// If is a directory, check the directory
+				// If is a directory, check the directory
 			} else if (stats.isDirectory()) {
 				return this.checkFolder(currentFile, extensions)
 			}
@@ -43,8 +49,8 @@ export class Analyser {
 		})
 		const lambdas = await Promise.all(promises)
 		return lambdas
-			.reduce((accumulator, value) => accumulator.concat(value))
-			.filter((n) =>  n > -1)
+			.reduce((accumulator, value) => accumulator.concat(value), [])
+			.filter((n) => n > -1)
 	}
 
 	public async checkFile(filePath: string): Promise<number[]> {
