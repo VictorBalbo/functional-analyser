@@ -35,16 +35,18 @@ const getRepos = async (lang: Language) => {
 		}
 
 		// else, download it
-		return new Promise((resolve, reject) => {
-			download(repo.full_name, repoFolderPath, async (error: Error) => {
-				if (error) {
-					console.log(`Error on Repository '${repo.full_name}': `, error.message)
-					reject(error)
-				}
-				const computedRepo = await analyser.checkRepo(repo)
-				resolve(calculateMetrics(computedRepo))
-			})
-		})
+		// return new Promise((resolve, reject) => {
+		// 	download(repo.full_name, repoFolderPath, async (error: Error) => {
+		// 		if (error) {
+		// 			fs.delete(repoFolderPath)
+		// 			console.log(`Error on downloading Repository '${repo.full_name}': `)
+		// 			resolve()
+		// 		} else {
+		// 			const computedRepo = await analyser.checkRepo(repo)
+		// 			resolve(calculateMetrics(computedRepo))
+		// 		}
+		// 	})
+		// })
 	})
 	const computedRepos = await Promise.all(repoPromises)
 	lang.repositories = computedRepos.filter((r) => r !== undefined) as Repository[]
