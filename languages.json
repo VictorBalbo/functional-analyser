@@ -28,5 +28,38 @@
 				["LB", "", "IN"]
 			]
 		}
+	},
+	{
+		"name": "Javascript",
+		"extensions": ".js",
+		"grammar": {
+			"states": ["IN", "AS", "AD", "TS", "CI", "CM", "LB"],
+			"initial": "IN",
+			"lambda": "LB",
+			"transitions": [
+				["IN", "'", "AS"],
+				["IN", "\"", "AD"],
+				["IN", "`", "TS"],
+				["IN", "//", "CI"],
+				["IN", "/*", "CM"],
+				["IN", "=>", "LB"],
+
+				["AS", "\\'", "AS"],
+				["AS", "\\\\", "AS"],
+				["AS", "'", "IN"],
+				
+				["AD", "\\\"", "AD"],
+				["AD", "\\\\", "AD"],
+				["AD", "\"", "IN"],
+
+				["TS", "`", "IN"],
+				
+				["CI", "\n", "IN"],
+				
+				["CM", "*/", "IN"],
+				
+				["LB", "", "IN"]
+			]
+		}
 	}
 ]
