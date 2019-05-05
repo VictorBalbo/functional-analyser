@@ -36,7 +36,7 @@ export const CreateDiagram = ({ name, grammar }: Language) => {
 			if (t[0] === grammar.lambda) {
 				color = `\n\t${t[0]} [color="red"]`
 			}
-			return `${color}\n\t${t[0]} -> ${t[2]} [label=${JSON.stringify(t[1])}]`
+			return `${color}\n\t${t[0]} -> ${t[2]} [label=${JSON.stringify(t[1] === '\n' ? '\\n' : t[1])}]`
 		})
 		.join('')
 	diagram += '\n}'
