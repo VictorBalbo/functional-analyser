@@ -1,4 +1,4 @@
-import fs from 'async-file'
+import fs from 'fs-extra'
 import path from 'path'
 import { Language } from './models/Language'
 import { getFolderPath, Repository } from './models/Repository'

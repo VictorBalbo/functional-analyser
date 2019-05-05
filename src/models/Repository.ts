@@ -19,5 +19,7 @@ export const calculateMetrics = (repo: Repository) => {
 	repo.avgLambdasPerFile = repo.lambdasTotal / repo.totalFiles
 	repo.filesWithLambda = repo.lamdasPerFiles.length
 	repo.avgLambdasPerValidFile = repo.lambdasTotal / repo.filesWithLambda
+
+	console.log(`${repo.language} - ${repo.name}: ${repo.totalFiles} files, ${repo.filesWithLambda} valid files, ${repo.lambdasTotal} total lambdas, ${repo.avgLambdasPerFile.toFixed(2)} lambdas per file, ${repo.avgLambdasPerValidFile.toFixed(2)} lambdas per valid file.`)
 	return repo
 }
