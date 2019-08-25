@@ -6,6 +6,7 @@ export interface Repository extends Metrics {
 	language?: string
 	name?: string
 	pushed_at?: Date
+	clone_url: string
 
 	// Computed properties
 	lamdasPerFiles: number[]

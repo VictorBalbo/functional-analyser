@@ -1,5 +1,5 @@
-import download from 'download-git-repo'
 import fs from 'fs-extra'
+import gitDownloader from 'git-downloader'
 import moment from 'moment'
 import fetch from 'node-fetch'
 import langs from '../languages.json'
@@ -35,18 +35,14 @@ const getRepos = async (lang: Language) => {
 		}
 
 		// else, download it
-		return new Promise((resolve, reject) => {
-			download(repo.full_name, repoFolderPath, async (error: Error) => {
-				if (error) {
-					await fs.remove(repoFolderPath)
-					console.log(`Error on downloading Repository '${repo.full_name}': `)
-					resolve()
-				} else {
-					const computedRepo = await analyser.checkRepo(repo)
-					resolve(calculateMetrics(computedRepo))
-				}
-			})
-		})
+		try {
+			await gitDownloader({ source: repo.clone_url, destination: repoFolderPath})
+			const computedRepo = await analyser.checkRepo(repo)
+			return calculateMetrics(computedRepo)
+		} catch (e) {
+			await fs.remove(repoFolderPath)
+			console.log(`Error on downloading Repository '${repo.full_name}': `)
+		}
 	})
 	const computedRepos = await Promise.all(repoPromises)
 	lang.repositories = computedRepos.filter((r) => r !== undefined) as Repository[]

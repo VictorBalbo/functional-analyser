@@ -17,15 +17,15 @@
     "@types/fs-extra": "5.0.5",
     "canvas": "^1.6.13",
     "chart.js": "^2.8.0",
-    "chartjs-node-canvas": "^2.1.0",
+    "chartjs-node-canvas": "^2.4.0",
     "tslint": "^5.16.0",
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "node-fetch": "^2.2.0",
-    "fs-extra": "7.0.1",
     "chartjs-node": "^1.7.1",
-    "download-git-repo": "^1.1.0",
-    "moment": "^2.22.2"
+    "fs-extra": "7.0.1",
+    "git-downloader": "^1.0.0",
+    "moment": "^2.22.2",
+    "node-fetch": "^2.2.0"
   }
 }
