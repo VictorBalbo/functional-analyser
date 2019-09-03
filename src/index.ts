@@ -22,31 +22,35 @@ const getRepos = async (lang: Language) => {
 
 	const analyser = new Analyser(lang)
 	const repoPromises = repos.map(async (repo) => {
-		// Check if folder already exists and is up to date
-		const repoFolderPath = getFolderPath(repo)
-		if (await fs.pathExists(repoFolderPath)) {
-			const folder = await fs.stat(repoFolderPath)
-			if (moment(folder.mtime) > moment(repo.pushed_at)) {
-				const computedRepo = await analyser.checkRepo(repo)
-				return calculateMetrics(computedRepo)
-			} else {
-				await fs.remove(repoFolderPath)
-			}
-		}
-
-		// else, download it
 		try {
-			await gitDownloader({ source: repo.clone_url, destination: repoFolderPath})
+			// Check if folder already exists and is up to date
+			const repoFolderPath = getFolderPath(repo)
+			if (await fs.pathExists(repoFolderPath)) {
+				const folder = await fs.stat(repoFolderPath)
+				if (moment(folder.mtime) > moment(repo.pushed_at)) {
+					const computedRepository = await analyser.checkRepo(repo)
+					return calculateMetrics(computedRepository)
+				} else {
+					await fs.remove(repoFolderPath)
+				}
+			}
+
+			// else, download it
+			try {
+				await gitDownloader({ source: repo.clone_url, destination: repoFolderPath})
+			} catch (e) {
+				await fs.remove(repoFolderPath)
+				console.log(`Error on downloading Repository '${repo.full_name}'`, e)
+			}
 			const computedRepo = await analyser.checkRepo(repo)
 			return calculateMetrics(computedRepo)
 		} catch (e) {
-			await fs.remove(repoFolderPath)
-			console.log(`Error on downloading Repository '${repo.full_name}': `)
+			console.log(`Error on processing Repository '${repo.full_name}'`, e)
 		}
 	})
 	const computedRepos = await Promise.all(repoPromises)
 	lang.repositories = computedRepos.filter((r) => r !== undefined) as Repository[]
-	lang.repositories.map((r) => {
+	lang.repositories.forEach((r) => {
 		if (!lang.avgLambdasPerFile || r.avgLambdasPerFile > lang.avgLambdasPerFile) {
 			lang.avgLambdasPerFile = r.avgLambdasPerFile
 		}
