@@ -1,7 +1,9 @@
+import exec from 'await-exec'
 import fs from 'fs-extra'
 import gitDownloader from 'git-downloader'
 import moment from 'moment'
 import fetch from 'node-fetch'
+import Semaphore from 'semaphore-async-await'
 import langs from '../languages.json'
 import { Analyser } from './Analyser.js'
 import { GITHUB_API } from './constants'
@@ -13,6 +15,7 @@ const getRepos = async (lang: Language) => {
 	// Save language diagram
 	const diagram = CreateDiagram(lang)
 	await fs.writeFile(`Diagrams/${lang.name}.dot`, diagram, { encoding: 'utf8' })
+	await exec(`dot -Tpng -o Diagrams/Diagram-${lang.name}.png Diagrams/${lang.name}.dot`)
 
 	// Get most used repositories by language
 	const response = await fetch(url)
@@ -68,7 +71,17 @@ const getRepos = async (lang: Language) => {
 }
 
 const main = async (l: Language[]) => {
-	const promises = l.map(async (lang) => await getRepos(lang))
+	const lock = new Semaphore(1)
+	const promises = l.map(async (lang) => {
+		try {
+			await lock.acquire()
+			await getRepos(lang)
+		} catch (e) {
+			console.log(`Error getting repository for ${lang.name}`, e)
+		} finally {
+			lock.release()
+		}
+	})
 	return Promise.all(promises)
 }
 

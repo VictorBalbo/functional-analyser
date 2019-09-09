@@ -1,5 +1,5 @@
 const GITHUB_API =
-	'https://api.github.com/search/repositories?s=stars&q=stars%3A>1+language%3A'
+	'https://api.github.com/search/repositories?per_page=30&s=stars&q=stars%3A>1+language%3A'
 const CHART_OPTIONS = {
 	type: 'bar',
 	options: {

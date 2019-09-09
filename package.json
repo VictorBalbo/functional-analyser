@@ -22,10 +22,12 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
+    "await-exec": "^0.1.2",
     "chartjs-node": "^1.7.1",
     "fs-extra": "7.0.1",
     "git-downloader": "^1.0.0",
     "moment": "^2.22.2",
-    "node-fetch": "^2.2.0"
+    "node-fetch": "^2.2.0",
+    "semaphore-async-await": "^1.5.1"
   }
 }

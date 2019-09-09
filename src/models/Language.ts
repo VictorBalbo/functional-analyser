@@ -15,8 +15,6 @@ export interface Language extends Metrics {
 }
 
 interface Grammar {
-	/** States of the grammar */
-	states: string[]
 	/** Initial state */
 	initial: string
 	/** Lambda State */

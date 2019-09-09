@@ -1,9 +1,8 @@
 [
 	{
 		"name": "C#",
-		"extensions": ".cs",
+		"extensions": [".cs"],
 		"grammar": {
-			"states": ["IN", "AS", "AD", "CI", "CM", "LB"],
 			"initial": "IN",
 			"lambda": "LB",
 			"transitions": [
@@ -16,24 +15,23 @@
 				["AS", "\\'", "AS"],
 				["AS", "\\\\", "AS"],
 				["AS", "'", "IN"],
-				
+
 				["AD", "\\\"", "AD"],
 				["AD", "\\\\", "AD"],
 				["AD", "\"", "IN"],
-				
+
 				["CI", "\n", "IN"],
-				
+
 				["CM", "*/", "IN"],
-				
+
 				["LB", "", "IN"]
 			]
 		}
 	},
 	{
 		"name": "Javascript",
-		"extensions": ".js",
+		"extensions": [".js", ".ts"],
 		"grammar": {
-			"states": ["IN", "AS", "AD", "TS", "CI", "CM", "LB"],
 			"initial": "IN",
 			"lambda": "LB",
 			"transitions": [
@@ -47,17 +45,17 @@
 				["AS", "\\'", "AS"],
 				["AS", "\\\\", "AS"],
 				["AS", "'", "IN"],
-				
+
 				["AD", "\\\"", "AD"],
 				["AD", "\\\\", "AD"],
 				["AD", "\"", "IN"],
 
 				["TS", "`", "IN"],
-				
+
 				["CI", "\n", "IN"],
-				
+
 				["CM", "*/", "IN"],
-				
+
 				["LB", "", "IN"]
 			]
 		}

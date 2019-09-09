@@ -28,6 +28,12 @@ declare module 'git-downloader' {
     const download: ({}: {source: string, destination: string}) => Promise<void>
     export = download
 }
+
+declare module 'await-exec' {
+    const exec: (command: string, options?: {log: boolean, cwd: any}) => Promise<void>
+    export = exec
+}
+
 declare module "*.json" {
     const value: any;
     export default value;
