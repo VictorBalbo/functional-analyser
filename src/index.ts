@@ -1,4 +1,5 @@
 import exec from 'await-exec'
+import { Presets, SingleBar } from 'cli-progress'
 import fs from 'fs-extra'
 import gitDownloader from 'git-downloader'
 import moment from 'moment'
@@ -12,10 +13,6 @@ import { calculateMetrics, getFolderPath, Repository } from './models/Repository
 
 const getRepos = async (lang: Language) => {
 	const url = GITHUB_API + encodeURIComponent(lang.name)
-	// Save language diagram
-	const diagram = CreateDiagram(lang)
-	await fs.writeFile(`Diagrams/${lang.name}.dot`, diagram, { encoding: 'utf8' })
-	await exec(`dot -Tpng -o Diagrams/Diagram-${lang.name}.png Diagrams/${lang.name}.dot`)
 
 	// Get most used repositories by language
 	const response = await fetch(url)
@@ -24,6 +21,11 @@ const getRepos = async (lang: Language) => {
 		.then((data) => data.items as Repository[])
 
 	const analyser = new Analyser(lang)
+
+	const progressBar = new SingleBar({}, Presets.shades_classic)
+	progressBar.start(50, 0)
+	let finishedRepos = 0
+
 	const repoPromises = repos.map(async (repo) => {
 		try {
 			// Check if folder already exists and is up to date
@@ -32,6 +34,10 @@ const getRepos = async (lang: Language) => {
 				const folder = await fs.stat(repoFolderPath)
 				if (moment(folder.mtime) > moment(repo.pushed_at)) {
 					const computedRepository = await analyser.checkRepo(repo)
+
+					finishedRepos++
+					progressBar.update(finishedRepos)
+
 					return calculateMetrics(computedRepository)
 				} else {
 					await fs.remove(repoFolderPath)
@@ -46,6 +52,10 @@ const getRepos = async (lang: Language) => {
 				console.log(`Error on downloading Repository '${repo.full_name}'`, e)
 			}
 			const computedRepo = await analyser.checkRepo(repo)
+
+			finishedRepos++
+			progressBar.update(finishedRepos)
+
 			return calculateMetrics(computedRepo)
 		} catch (e) {
 			console.log(`Error on processing Repository '${repo.full_name}'`, e)
@@ -67,15 +77,27 @@ const getRepos = async (lang: Language) => {
 			lang.filesWithLambda = r.filesWithLambda
 		}
 	})
+	progressBar.stop()
 	CreateMetricsGraphic(lang)
 }
 
-const main = async (l: Language[]) => {
+const main = async (l: Language[], diagramsOnly: boolean = false) => {
 	const lock = new Semaphore(1)
 	const promises = l.map(async (lang) => {
 		try {
 			await lock.acquire()
-			await getRepos(lang)
+			console.log(`Start processing ${lang.name}`)
+
+			// Save language diagram
+			const diagram = CreateDiagram(lang)
+			await fs.writeFile(`Diagrams/${lang.name}.dot`, diagram, { encoding: 'utf8' })
+			await exec(`dot -Tpng -o Diagrams/${lang.name}-Diagram.png Diagrams/${lang.name}.dot`)
+			console.log(`Saved diagram for ${lang.name}`)
+			// Process repository if needed
+			if (!diagramsOnly) {
+				await getRepos(lang)
+			}
+			console.log(`Finished processing ${lang.name}`)
 		} catch (e) {
 			console.log(`Error getting repository for ${lang.name}`, e)
 		} finally {
@@ -86,5 +108,6 @@ const main = async (l: Language[]) => {
 }
 
 (async () => {
-	await main(langs)
+	const diagramsOnly = process.argv.includes('-d')
+	await main(langs, diagramsOnly)
 })()

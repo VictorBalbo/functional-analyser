@@ -34,6 +34,18 @@ declare module 'await-exec' {
     export = exec
 }
 
+declare module 'cli-progress' {
+    export class SingleBar {
+        constructor(options: any, presets: any);
+        update(current: number, payload?: any): void;
+        start(total: number, startValue: number, payload?: any): void;
+        stop(): void;
+    }
+    module Presets {
+        export const shades_classic: any
+    } 
+}
+
 declare module "*.json" {
     const value: any;
     export default value;

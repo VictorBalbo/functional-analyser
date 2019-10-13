@@ -12,10 +12,7 @@ export class Analyser {
 
 	public async checkRepo(repo: Repository): Promise<Repository> {
 		const repoFolder = getFolderPath(repo)
-		const computedLambdas = await this.checkFolder(
-			repoFolder,
-			this.lang.extensions,
-		)
+		const computedLambdas = await this.checkFolder(repoFolder)
 		return {
 			...repo,
 			totalFiles: computedLambdas.length,
@@ -23,10 +20,7 @@ export class Analyser {
 		}
 	}
 
-	public async checkFolder(
-		currentPath: string,
-		extensions: string[],
-	): Promise<number[]> {
+	public async checkFolder(currentPath: string): Promise<number[]> {
 		const files = await fs.readdir(currentPath)
 		// Iterate over each 'file' in folder
 		const promises = files.map(async (file) => {
@@ -38,12 +32,12 @@ export class Analyser {
 				const fileExt = path.extname(currentFile)
 
 				// If is a file and has correct extension, check file
-				if (fileExt && extensions.indexOf(fileExt) !== -1) {
+				if (fileExt && this.lang.extensions.indexOf(fileExt) !== -1) {
 					return this.checkFile(currentFile)
 				}
 				// If is a directory, check the directory
 			} else if (stats.isDirectory()) {
-				return this.checkFolder(currentFile, extensions)
+				return this.checkFolder(currentFile)
 			}
 			return [-1]
 		})

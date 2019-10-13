@@ -59,5 +59,72 @@
 				["LB", "", "IN"]
 			]
 		}
+	},
+	{
+		"name": "Java",
+		"extensions": [".java"],
+		"grammar": {
+			"initial": "IN",
+			"lambda": "LB",
+			"transitions": [
+				["IN", "'", "AS"],
+				["IN", "\"", "AD"],
+				["IN", "//", "CI"],
+				["IN", "/*", "CM"],
+				["IN", "->", "LB"],
+
+				["AS", "\\'", "AS"],
+				["AS", "\\\\", "AS"],
+				["AS", "'", "IN"],
+
+				["AD", "\\\"", "AD"],
+				["AD", "\\\\", "AD"],
+				["AD", "\"", "IN"],
+
+				["CI", "\n", "IN"],
+
+				["CM", "*/", "IN"],
+
+				["LB", "", "IN"]
+			]
+		}
+	},
+	{
+		"name": "Python",
+		"extensions": [".py"],
+		"grammar": {
+			"initial": "IN",
+			"lambda": "LB",
+			"transitions": [
+				["IN", "'", "AS"],
+				["IN", "\"", "AD"],
+				["IN", "'''", "ATS"],
+				["IN", "\"\"\"", "ATD"],
+				["IN", "#", "CI"],
+				["IN", "lambda", "LB"],
+
+				["AS", "\\'", "AS"],
+				["AS", "\\\\", "AS"],
+				["AS", "'", "IN"],
+				["AS", "\n", "IN"],
+
+				["AD", "\\\"", "AD"],
+				["AD", "\\\\", "AD"],
+				["AD", "\"", "IN"],
+				["AD", "\n", "IN"],
+
+				["ATS", "\\'", "ATS"],
+				["ATS", "\\\\", "ATS"],
+				["ATS", "'''", "IN"],
+
+				["ATD", "\\\"", "ATD"],
+				["ATD", "\\\\", "ATD"],
+				["ATD", "\"\"\"", "IN"],
+
+				["CI", "\n", "IN"],
+
+				["LB", "", "IN"]
+			]
+		}
 	}
 ]

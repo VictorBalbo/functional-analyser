@@ -43,35 +43,45 @@ export const CreateDiagram = ({ name, grammar }: Language) => {
 
 export const CreateMetricsGraphic = async (lang: Language) => {
 	const chartJsOptions = {
-		...CHART_OPTIONS,
+		type: 'bar',
+		options: {
+			...CHART_OPTIONS,
+			title: {
+				display: true,
+				text: lang.name,
+			},
+		},
 		data: {
 			labels: lang.repositories.map((r) => r.name),
 			datasets: [
 				{
 					label: 'Total Lambdas',
 					data: lang.repositories.map((r) => (r.lambdasTotal / lang.lambdasTotal) * 100),
-					backgroundColor: 'rgba(0, 0, 255, 0.5)',
-					borderColor: 'rgba(0, 0, 255, 1)',
-					borderWidth: 1,
-				},
-				{
-					label: 'Lambdas Per File',
-					data: lang.repositories.map((r) => (r.avgLambdasPerFile / lang.avgLambdasPerFile) * 100),
 					backgroundColor: 'rgba(0, 255, 0, 0.5)',
 					borderColor: 'rgba(0, 255, 0, 1)',
 					borderWidth: 1,
+					stack: 'Stack 0',
 				},
 				{
-					label: 'Lambdas Per Valid File',
-					data: lang.repositories.map((r) => (r.avgLambdasPerValidFile / lang.avgLambdasPerValidFile) * 100),
+					label: 'Files without Lambdas',
+					data: lang.repositories.map((r) => (1 - (r.filesWithLambda / r.totalFiles)) * 100),
 					backgroundColor: 'rgba(255, 0, 0, 0.5)',
 					borderColor: 'rgba(255, 0, 0, 1)',
 					borderWidth: 1,
+					stack: 'Stack 1',
+				},
+				{
+					label: 'Files with Lambdas',
+					data: lang.repositories.map((r) => (r.filesWithLambda / r.totalFiles) * 100),
+					backgroundColor: 'rgba(0, 0, 255, 0.5)',
+					borderColor: 'rgba(0, 0, 255, 1)',
+					borderWidth: 1,
+					stack: 'Stack 1',
 				},
 			],
 		},
 	}
-	const chartNode = new ChartjsNode(800, 600)
+	const chartNode = new ChartjsNode(1000, 600)
 	await chartNode.drawChart(chartJsOptions)
 	await chartNode.writeImageToFile('image/png', `./Diagrams/${lang.name}.png`)
 	chartNode.destroy()
