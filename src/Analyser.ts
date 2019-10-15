@@ -25,7 +25,7 @@ export class Analyser {
 		// Iterate over each 'file' in folder
 		const promises = files.map(async (file) => {
 			const currentFile = currentPath + '/' + file
-			const stats = await fs.stat(currentFile)
+			const stats = await fs.lstat(currentFile)
 
 			// Check if 'file' is really a file
 			if (stats.isFile()) {
