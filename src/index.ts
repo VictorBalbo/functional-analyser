@@ -24,7 +24,6 @@ const getRepos = async (lang: Language) => {
 
 	const progressBar = new SingleBar({}, Presets.shades_classic)
 	progressBar.start(50, 0)
-	let finishedRepos = 0
 
 	const repoPromises = repos.map(async (repo) => {
 		try {
@@ -35,17 +34,17 @@ const getRepos = async (lang: Language) => {
 				if (moment(folder.mtime) > moment(repo.pushed_at)) {
 					const computedRepository = await analyser.checkRepo(repo)
 
-					finishedRepos++
-					progressBar.update(finishedRepos)
-
+					progressBar.increment()
 					return calculateMetrics(computedRepository)
 				} else {
+					console.log(`Removing ${repo.name}`)
 					await fs.remove(repoFolderPath)
 				}
 			}
 
 			// else, download it
 			try {
+				// console.log(`Downloading ${repo.name}`)
 				await gitDownloader({ source: repo.clone_url, destination: repoFolderPath})
 			} catch (e) {
 				await fs.remove(repoFolderPath)
@@ -53,9 +52,7 @@ const getRepos = async (lang: Language) => {
 			}
 			const computedRepo = await analyser.checkRepo(repo)
 
-			finishedRepos++
-			progressBar.update(finishedRepos)
-
+			progressBar.increment()
 			return calculateMetrics(computedRepo)
 		} catch (e) {
 			console.log(`Error on processing Repository '${repo.full_name}'`, e)

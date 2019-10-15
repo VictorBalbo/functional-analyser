@@ -34,7 +34,9 @@ export const CreateDiagram = ({ name, grammar }: Language) => {
 			if (t[0] === grammar.lambda) {
 				color = `\n\t${t[0]} [color="red"]`
 			}
-			return `${color}\n\t${t[0]} -> ${t[2]} [label=${JSON.stringify(t[1] === '\n' ? '\\n' : t[1])}]`
+			return `${color}\n\t${t[0]} -> ${t[2]} [label=${JSON.stringify(
+				t[1] === '\n' ? '\\n' : t[1],
+			)}]`
 		})
 		.join('')
 	diagram += '\n}'
@@ -56,23 +58,29 @@ export const CreateMetricsGraphic = async (lang: Language) => {
 			datasets: [
 				{
 					label: 'Total Lambdas',
-					data: lang.repositories.map((r) => (r.lambdasTotal / lang.lambdasTotal) * 100),
+					data: lang.repositories.map(
+						(r) => (r.lambdasTotal / lang.lambdasTotal) * 100,
+					),
 					backgroundColor: 'rgba(0, 255, 0, 0.5)',
 					borderColor: 'rgba(0, 255, 0, 1)',
 					borderWidth: 1,
 					stack: 'Stack 0',
 				},
 				{
-					label: 'Files without Lambdas',
-					data: lang.repositories.map((r) => (1 - (r.filesWithLambda / r.totalFiles)) * 100),
+					label: 'Arquivos sem utilização de Lambdas',
+					data: lang.repositories.map(
+						(r) => (1 - r.filesWithLambda / r.totalFiles) * 100,
+					),
 					backgroundColor: 'rgba(255, 0, 0, 0.5)',
 					borderColor: 'rgba(255, 0, 0, 1)',
 					borderWidth: 1,
 					stack: 'Stack 1',
 				},
 				{
-					label: 'Files with Lambdas',
-					data: lang.repositories.map((r) => (r.filesWithLambda / r.totalFiles) * 100),
+					label: 'Arquivos com utilização de Lambdas',
+					data: lang.repositories.map(
+						(r) => (r.filesWithLambda / r.totalFiles) * 100,
+					),
 					backgroundColor: 'rgba(0, 0, 255, 0.5)',
 					borderColor: 'rgba(0, 0, 255, 1)',
 					borderWidth: 1,
