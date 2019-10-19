@@ -35,10 +35,17 @@ declare module 'await-exec' {
 }
 
 declare module 'cli-progress' {
-    export class SingleBar {
+    export class SingleBar extends GenericBar {
         constructor(options: any, presets: any);
-        update(current: number, payload?: any): void;
         start(total: number, startValue: number, payload?: any): void;
+    }
+    export class MultiBar extends GenericBar {
+        constructor(options: any, presets: any);
+        create(total: number, startValue: number, payload?: any): SingleBar;
+    }
+    class GenericBar {
+        update(current: number, payload?: any): void;
+        increment(step?: number, payload?: any): void;
         stop(): void;
     }
     module Presets {

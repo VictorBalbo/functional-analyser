@@ -1,4 +1,5 @@
 import ChartjsNode from 'chartjs-node'
+import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { CHART_OPTIONS } from '../constants'
 import { Metrics } from './Metrics'
 import { Repository } from './Repository'
@@ -44,6 +45,8 @@ export const CreateDiagram = ({ name, grammar }: Language) => {
 }
 
 export const CreateMetricsGraphic = async (lang: Language) => {
+	// Used just to validate lib import
+	await ChartDataLabels
 	const chartJsOptions = {
 		type: 'bar',
 		options: {
@@ -51,38 +54,30 @@ export const CreateMetricsGraphic = async (lang: Language) => {
 			title: {
 				display: true,
 				text: lang.name,
+				position: 'bottom',
 			},
 		},
 		data: {
 			labels: lang.repositories.map((r) => r.name),
+			totalLambdas: lang.repositories.map((r) => r.totalFiles),
 			datasets: [
 				{
-					label: 'Total Lambdas',
+					label: 'Arquivos com utilização de Lambdas',
 					data: lang.repositories.map(
-						(r) => (r.lambdasTotal / lang.lambdasTotal) * 100,
+						(r) => Math.ceil((r.filesWithLambda / r.totalFiles) * 100),
 					),
-					backgroundColor: 'rgba(0, 255, 0, 0.5)',
-					borderColor: 'rgba(0, 255, 0, 1)',
-					borderWidth: 1,
-					stack: 'Stack 0',
-				},
-				{
-					label: 'Arquivos sem utilização de Lambdas',
-					data: lang.repositories.map(
-						(r) => (1 - r.filesWithLambda / r.totalFiles) * 100,
-					),
-					backgroundColor: 'rgba(255, 0, 0, 0.5)',
-					borderColor: 'rgba(255, 0, 0, 1)',
+					backgroundColor: 'rgba(0, 0, 255, 0.5)',
+					borderColor: 'rgba(0, 0, 255, 1)',
 					borderWidth: 1,
 					stack: 'Stack 1',
 				},
 				{
-					label: 'Arquivos com utilização de Lambdas',
+					label: 'Arquivos sem utilização de Lambdas',
 					data: lang.repositories.map(
-						(r) => (r.filesWithLambda / r.totalFiles) * 100,
+						(r) => Math.floor((1 - r.filesWithLambda / r.totalFiles) * 100),
 					),
-					backgroundColor: 'rgba(0, 0, 255, 0.5)',
-					borderColor: 'rgba(0, 0, 255, 1)',
+					backgroundColor: 'rgba(255, 0, 0, 0.5)',
+					borderColor: 'rgba(255, 0, 0, 1)',
 					borderWidth: 1,
 					stack: 'Stack 1',
 				},

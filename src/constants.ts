@@ -7,6 +7,32 @@ const CHART_OPTIONS = {
 			ctx.fillStyle = 'white'
 			ctx.fillRect(0, 0, chartInstance.chart.width, chartInstance.chart.height)
 		},
+		datalabels: {
+			align: 'end',
+			anchor: 'end',
+			color: 'black',
+			rotation: -45,
+			formatter: (value: any, context: any) => {
+				console.log(value)
+				if (context.dataset.label === 'Arquivos sem utilização de Lambdas') {
+					return Math.round(context.chart.data.totalLambdas[context.dataIndex])
+				}
+				return null
+			},
+		},
+		annotation: {
+			annotations: [{
+				label: {
+					content: 'Media',
+					enabled: true,
+				},
+				type: 'line',
+				mode: 'horizontal',
+				borderColor: 'black',
+				borderWidth: 5,
+
+			}]
+		},
 	},
 	scales: {
 		xAxes: [{
@@ -26,6 +52,14 @@ const CHART_OPTIONS = {
 				labelString: 'Porcentagem',
 			},
 		}],
+	},
+	layout: {
+		padding: {
+			top: 45,
+		},
+	},
+	legend: {
+		position: 'bottom',
 	},
 }
 
